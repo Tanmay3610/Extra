@@ -1,0 +1,131 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef struct alist{
+	int vertex;
+	alist *next;
+}alist;
+
+typedef struct node{
+	int vertex;
+	node *next;
+	alist *list_head = NULL;
+}node;
+
+node *head = NULL;
+node *p = NULL;
+
+void add_neighbour(int a, int b){
+	p = head;
+	while(p != NULL){
+		if(p->vertex == a){
+			alist *new_list_node = (alist*)malloc(sizeof(alist));
+			new_list_node -> vertex = b;
+			new_list_node -> next = NULL;
+			alist *p1 = p->list_head;
+			while(p1->next != NULL)
+				p1 = p1->next;
+			p1->next = new_list_node;
+			break;
+		}
+		p = p->next;
+	}
+}
+
+void create_vertex(int a, int b){
+	node *new_vertex = (node*)malloc(sizeof(node));
+	new_vertex->vertex = a;
+	new_vertex->next = NULL;
+	alist *new_list_node = (alist*)malloc(sizeof(alist));
+	new_list_node->next = NULL;
+	new_list_node->vertex = b;
+	new_vertex->list_head = new_list_node;
+	if (head == NULL)
+		head = new_vertex;
+	else{
+		p = head;
+		while(p->next != NULL)
+			p = p->next;
+		p->next = new_vertex;
+	}
+}
+
+void find(int a, int b){
+	p = head;
+	int flag = 0;
+	while(p != NULL){
+		if(p->vertex == a){
+			add_neighbour(a,b);
+			flag = 1;
+			break;
+		}
+		p = p->next;
+	}
+	if(flag == 0)
+		create_vertex(a,b);
+}
+
+void add_edge(int a, int b){
+	find(a,b);	
+}
+
+void print_graph()
+{
+	p = head;
+	while(p != NULL)
+	{
+		cout<<p->vertex<<"->";
+		alist *p1 = p->list_head;
+		while(p1 != NULL){
+			cout<<p1->vertex<<" , ";
+			p1 = p1->next;
+		}
+		p = p->next;
+		cout<<endl;
+	}
+}
+
+
+void dfs(bool *visited, int current)
+{
+	if(visited[current])
+		return;
+	visited[current] = true;
+	cout<<current<<"->";
+	p = head;
+	node *temp;
+	int flag = 0;
+	while(p != NULL){
+		if(p->vertex == current)
+		{
+			flag = 1;
+			temp = p;
+			break;
+		}
+		p = p->next;
+	}
+	if(flag == 0)
+		return;
+	alist *p1;
+	p1 = temp->list_head;
+	while(p1 != NULL){
+		dfs(visited,p1->vertex);
+		p1 = p1->next;
+	}
+}
+
+int main(){
+	add_edge(1,2);
+	add_edge(1,3);
+	add_edge(2,1);
+	add_edge(2,5);
+	int number_of_nodes = 5;
+	bool visited[number_of_nodes+1];
+	int i = 0;
+	for(i = 0; i<=number_of_nodes; i++)
+		visited[i] = false;
+	dfs(visited, 1);
+	cout<<endl;
+	print_graph();
+	return 0;
+}
