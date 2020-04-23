@@ -1,0 +1,88 @@
+//Dungeon Problem
+//   ----------------
+//   | S . . # . . .|
+//   | . # . . . # .|
+//   | . # . . . . .|
+//   | . . # # . . .|
+//   | # . # E . # .|
+//   ----------------
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int n = 5, m = 7;
+bool visited[5][7];
+void explore_neighbour(int cr, int cc);
+int nodes_left_in_layer = 1; //how many nodes we need to dequeue
+int nodes_in_next_layer = 0; //how many nodes we need to enqueue
+bool reached_end = false;
+char maze[5][7];
+queue <int> qr,qc;
+void solve(){
+	int sr = 0, sc = 0; //Starting point
+	int cr,cc; //current row and column
+	int move_count = 0;
+	visited[sr][sc] = true;
+	qr.push(sr);
+	qc.push(sc);
+		while(!qr.empty()){
+		cr = qr.front();
+		cc = qc.front();
+		qr.pop();
+		qc.pop();
+		if(maze[cr][cc] == 'E') {
+			reached_end = true;
+			break;	
+		}
+		explore_neighbour(cr,cc);
+		nodes_left_in_layer--;
+		if(nodes_left_in_layer == 0)
+		{
+			nodes_left_in_layer = nodes_in_next_layer;
+			nodes_in_next_layer = 0;
+			move_count++;
+		}
+		
+	}
+	if(reached_end)
+		cout<<move_count;
+	else
+		cout<<"Not Possible";
+}
+
+void explore_neighbour(int cr, int cc){
+	int dr[] = {-1,+1,0,0};
+	int dc[] = {0,0,+1,-1},i,r,c;
+	for(i = 0; i<4; i++){
+		r = cr + dr[i];
+		c = cc + dc[i];
+		if(r>=n || c>=m)  continue;
+		if(r<0 || c<0)	continue;
+		if(visited[r][c]) continue;
+		if(maze[r][c] == '#') continue;
+		visited[r][c] = true;
+		qr.push(r);
+		qc.push(c);
+		nodes_in_next_layer++;		
+	}
+}
+
+int main(){
+	int i,j;
+	for(i = 0; i<n; i++)
+		for(j = 0; j<m; j++)
+			visited[i][j] = false;
+	
+	maze[4][3] = 'E';
+	maze[0][3] = '#';
+	maze[1][1] = '#';
+	maze[1][5] = '#';
+	maze[2][1] = '#';
+	maze[3][2] = '#';
+	maze[3][3] = '#';
+	maze[4][0] = '#';
+	maze[4][2] = '#';
+	maze[4][5] = '#';
+	solve();
+	return 0;
+}
