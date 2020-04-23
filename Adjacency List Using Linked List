@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef struct alist{
+	char vertex;
+	struct alist *next;
+}alist;
+
+typedef struct node{
+	char vertex;
+	struct node *next;
+	alist *list;
+	alist *list_head = NULL;
+}node;
+
+
+node *head = NULL;
+node *p = NULL;
+
+void add_vertex(char a,char b){
+	p = head;
+	alist *p1;
+	while(p != NULL){
+		if(p->vertex == a){
+			p1 = p->list_head;
+			while(p1->next != NULL){
+				p1 = p1->next;				
+			}				
+			alist *new_list_node = (alist*)malloc(sizeof(alist));
+			new_list_node->vertex = b;
+			new_list_node->next = NULL;
+			p1->next = new_list_node;
+			break;			
+		}
+	}
+}
+
+void create_linked_list(char data,char b){
+	node *new_node = (node*)malloc(sizeof(node));
+	new_node->vertex = data;
+	new_node->next = NULL;
+	alist *new_list_node;
+	new_list_node = (alist*)malloc(sizeof(alist));
+	new_list_node->next = NULL;
+	new_list_node->vertex = b;
+	new_node->list_head = new_list_node;
+	if (head == NULL)
+		head = new_node;
+	else{
+		p = head;
+		while(p->next != NULL){
+		p = p->next;
+		}
+		p->next = new_node;
+	}
+}
+
+void find(char a, char b){
+	p = head;
+	int flag = 0;
+	while(p != NULL){
+		if (p->vertex == a){
+			flag = 1;
+			add_vertex(a,b);
+			break;
+		}
+		p = p->next;
+	}
+	if (flag == 0)
+		create_linked_list(a,b);
+}
+
+void add_edge(char a, char b){
+	find(a,b);	
+}
+
+void print_graph(){
+	p = head;
+	alist *p1;
+	while(p != NULL){
+		p1 = p->list_head;
+		cout<<p->vertex<<"-> ";
+		while(p1 != NULL){
+			cout<<p1->vertex<<"|";
+			p1 = p1->next;
+		}
+		cout<<endl;
+		p = p->next;
+	}
+}
+
+int main(){
+	add_edge('a','b');
+	add_edge('a','c');
+	add_edge('b','c');
+	print_graph();
+	return 0;
+}
