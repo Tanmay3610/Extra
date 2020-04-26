@@ -1,0 +1,49 @@
+from collections import defaultdict
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(list)
+    
+    def add_edge(self,a,b):
+        self.graph[a].append(b)
+
+    def dfs(self,visited,i,visited_nodes):
+        visited[i] = True
+        for j in self.graph[i]:
+            if visited[j] == False:
+                self.dfs(visited,j,visited_nodes)
+        visited_nodes.append(i)
+        
+    def topological_sort(self,no_of_nodes):
+        visited = [False for i in range(no_of_nodes+1)]
+        ordering = []
+        i = 0
+        while i<no_of_nodes + 1:
+            if visited[i] : i = i + 1
+            else:
+                visited_nodes = []
+                self.dfs(visited,i,visited_nodes)
+                i = i+1
+                for j in visited_nodes:
+                    ordering.append(j)
+        ordering.reverse()
+        return ordering
+
+    def get_number_of_nodes(self):
+        maximum = -100000
+        for i in self.graph:
+            maximum = max(maximum,i)
+            for j in self.graph[i]:
+                maximum = max(maximum,j)
+        return maximum
+
+    def print_graph(self):
+        print(self.graph)
+obj = Graph()
+obj.add_edge(5, 2)
+obj.add_edge(5, 0) 
+obj.add_edge(4, 0) 
+obj.add_edge(4, 1) 
+obj.add_edge(2, 3)
+obj.add_edge(3, 1) 
+obj.print_graph()
+print(obj.topological_sort(obj.get_number_of_nodes()))
