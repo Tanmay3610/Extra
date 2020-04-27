@@ -1,0 +1,62 @@
+from collections import defaultdict
+inf = 999999
+
+class Graph_Directed:
+    def __init__(self):
+        self.adjacecny_list = defaultdict(list)
+
+    def add_edge(self,a,b,c):
+        self.adjacecny_list[a].append((b,c))
+
+    def print_graph(self,n):
+        for i in range(n+1):
+            for j in self.adjacecny_list[i]:
+                print(i,end = '')
+                print('->',j[0],end = '')
+                print('(',j[1],')',end = '')
+                print()
+            
+    def get_number_of_nodes(self):
+        global inf
+        maximum = -1*inf
+        for i in self.adjacecny_list:
+            maximum = max(maximum,i)
+            for j in self.adjacecny_list[i]:
+                maximum = max(maximum,j[0])
+        return maximum
+
+    def find_min_vertex(self,visited,distance,no_of_nodes):
+        min_vertex = -1
+        for i in range(no_of_nodes + 1):
+            if visited[i] == False and (min_vertex == -1 or distance[i]<distance[min_vertex]):
+                min_vertex = i
+        return min_vertex
+
+    def print_result(self,distance,no_of_nodes):
+        print('Distance from source to:')
+        for i in range(no_of_nodes + 1):
+            print(i,' is ',distance[i])
+
+    def dijkastra(self,source,no_of_nodes):
+        visited = [False for i in range(no_of_nodes + 1)]
+        distance = [inf for i in range(no_of_nodes + 1)]
+        distance[source] = 0
+        for i in range(no_of_nodes):
+            min_vertex = self.find_min_vertex(visited,distance,no_of_nodes)
+            visited[min_vertex] = True
+            for j in self.adjacecny_list[min_vertex]:
+                if visited[j[0]] == False:
+                    dist = distance[min_vertex] + j[1]
+                    if dist<distance[j[0]]:
+                        distance[j[0]] = dist
+        
+        self.print_result(distance,no_of_nodes)
+        
+obj = Graph_Directed()
+obj.add_edge(0,1,1)
+obj.add_edge(1,2,3)
+obj.add_edge(1,3,3)
+source = 0
+number_of_nodes = obj.get_number_of_nodes()
+obj.dijkastra(source,number_of_nodes)
+obj.print_graph(number_of_nodes)
