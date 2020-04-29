@@ -1,0 +1,113 @@
+#Dijkastra Using Priority queue
+from collections import defaultdict
+inf = 999999
+
+class priority_queue:
+    def __init__(self):
+        self.pq = []
+        self.queue_size = 0
+
+    def print_queue(self):
+        print(self.pq)
+
+    @staticmethod
+    def parent(key):
+        return int((key-1)/2)
+
+    @staticmethod
+    def left(key):
+        return int((2*key) + 1)
+
+    @staticmethod
+    def right(key):
+        return int((2*key) + 2)
+
+    def swap(self,a,b):
+        temp = self.pq[a]
+        self.pq[a] = self.pq[b]
+        self.pq[b] = temp
+
+    def push(self,weight,vertex):
+        self.pq.append((weight,vertex))
+        i = self.queue_size
+        self.queue_size = self.queue_size + 1
+        while priority_queue.parent(i) >=0 and self.pq[priority_queue.parent(i)] > self.pq[i]:
+            self.swap(priority_queue.parent(i),i)
+            i = priority_queue.parent(i)
+
+    def not_empty(self):
+        if len(self.pq) == 0: 
+            return False
+        else:
+            return True
+    def min_heapify(self,index):
+        smallest = index
+        index_weight,_ = self.pq[index]
+        if priority_queue.right(index) >= 0 and priority_queue.right(index)<self.queue_size:
+            right_comparison_weight,_ = self.pq[priority_queue.right(index)]
+            if right_comparison_weight < index_weight:
+                smallest = priority_queue.right(index)
+        if priority_queue.left(index) >= 0 and priority_queue.left(index)<self.queue_size:
+            left_comparison_weight,_ = self.pq[priority_queue.left(index)]
+            if left_comparison_weight < index_weight:
+                smallest = priority_queue.left(index)
+        if smallest is not index:
+            self.swap(smallest,index)
+            self.min_heapify(smallest)
+
+    def extract_mini(self):
+        ret = self.pq[0]
+        self.pq[0] = self.pq[self.queue_size - 1]
+        self.queue_size = self.queue_size - 1
+        self.pq.pop()
+        if self.queue_size is not 0:
+            self.min_heapify(0)
+        return ret
+    
+class Graph:
+    def __init__(self):
+        self.pq = priority_queue()
+        self.adjacency_list = defaultdict(list)
+
+    def add_edge(self,a,b,c):
+        self.adjacency_list[a].append((b,c))
+
+    def print_graph(self):
+        print(self.adjacency_list)
+
+    def get_number_of_nodes(self):
+        maximum = 0
+        for i in self.adjacency_list:
+            maximum = max(maximum,i)
+            for j in self.adjacency_list[i]:
+                maximum = max(maximum,j[0])
+        return maximum
+        
+    @staticmethod
+    def print_result(distance):
+        print("Shortest Distance from 0 to:")
+        for i in distance:
+            print(i)
+
+    def dijkastra(self,number_of_nodes):
+        distance = [inf for i in range(number_of_nodes + 1)]
+        distance[0] = 0
+        self.pq.push(0,0)
+        while self.pq.not_empty():
+            _,min_vertex = self.pq.extract_mini()
+            for i in self.adjacency_list[min_vertex]:
+                vertex = i[0]
+                weight = i[1]
+                if distance[vertex] > distance[min_vertex] + weight:
+                    distance[vertex] = distance[min_vertex] + weight
+                    self.pq.push(distance[vertex],vertex)
+        Graph.print_result(distance)
+
+
+obj = Graph()
+obj.add_edge(0,1,2)
+obj.add_edge(1,2,3)
+obj.add_edge(0,2,1)
+number_of_nodes = obj.get_number_of_nodes()
+obj.dijkastra(number_of_nodes)
+obj.print_graph()
