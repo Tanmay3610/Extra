@@ -1,4 +1,5 @@
-//Dijkastra Algorithm
+//Dijkastra Algorithm in C++ using Linked List
+//By: Tanmay Agarwal
 #include <bits/stdc++.h>
 using namespace std;
 
