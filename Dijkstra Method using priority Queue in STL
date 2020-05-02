@@ -1,0 +1,61 @@
+//Dijkastra
+//By: Tanmay Agarwal
+#include<bits/stdc++.h>
+using namespace std;
+class Graph{
+    
+    int number_of_nodes = 3;
+    vector<pair<int, int> >adj[3];
+    priority_queue <pair<int, int>, vector<pair<int, int> >, greater <pair<int, int> > >pq;
+    
+    public:
+    
+    void addEdge(int a, int b, int c){
+        adj[a].push_back(make_pair(b,c));
+        adj[b].push_back(make_pair(a,c));
+    }
+
+    void show_graph(){
+        int i = 0;
+        for (; i<number_of_nodes; i++){
+            cout<<i<<"->";
+            for(auto x:adj[i]){
+                cout<<x.first<<"("<<x.second<<") , ";
+            }   
+            cout<<endl;
+        }        
+    }
+
+    void dijkastra(){
+        int distance[number_of_nodes];
+        int i = 0;
+        for(; i<number_of_nodes; i++)
+            distance[i] = INT_MAX;
+        pq.push(make_pair(0,0));
+        distance[0] = 0;
+        while(!pq.empty()){
+            int min_vertex = pq.top().second;
+            pq.pop();
+            for(auto x:adj[min_vertex]){
+                if(distance[x.first] > x.second + distance[min_vertex]){
+                   distance[x.first] = x.second + distance[min_vertex];
+                   pq.push(make_pair(distance[x.first],x.first));        
+                }                  
+            }
+        }
+    i = 0;
+    for (; i<number_of_nodes; i++)
+        cout<<i<<"->"<<distance[i]<<endl;
+    }
+
+};
+
+int main(){
+    Graph obj = Graph();
+    obj.addEdge(0,1,1);
+    obj.addEdge(1,2,3);
+    obj.addEdge(0,2,1);
+    obj.dijkastra();
+    //obj.show_graph();
+    return 0;
+}
